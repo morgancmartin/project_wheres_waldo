@@ -23,12 +23,12 @@ var WaldoModule = (function(){
     $('#image-container').mouseleave(_hideTags);
   };
 
-  var Tag = function(x,y){
+  var Tag = function(x,y,id){
     this.x = x;
     this.y = y;
     this.width = 26;
     this.height = 26;
-    this.id = _tags.length;
+    this.id = id;
   };
 
   var _reloadTags = function() {
@@ -37,12 +37,11 @@ var WaldoModule = (function(){
       method: 'GET',
       dataType: 'json',
       success: function(tags) {
-        console.log(tags);
         _tags = [];
         for(var i in tags){
           var tag = tags[i];
           if(tag.x && tag.y){
-            _tags.push( new Tag(tags[i].x, tags[i].y) );
+            _tags.push( new Tag(tag.x, tag.y, tag.id) );
           }
         }
         _renderTags();
@@ -69,7 +68,6 @@ var WaldoModule = (function(){
   };
 
   var _clearEmptyTags = function(){
-    console.log('clearing');
     $('.blank'). remove();
     $('select').remove();
   };
@@ -99,6 +97,22 @@ var WaldoModule = (function(){
         .css("top", tag.y - (tag.height/2));
     if(tag.class === 'blank') { $tagDiv.addClass('blank'); }
     $("#image-container").append($tagDiv);
+    _drawX($tagDiv);
+  };
+
+  var _drawX = function ($tagDiv) {
+    var $xDiv = $('<div>')
+      .addClass("x")
+      .css("left", "30px")
+      .css("top", "-5px")
+      .text("X");
+    $tagDiv.append($xDiv);
+    $tagDiv.click(_closeTag);
+  };
+
+  var _closeTag = function(e) {
+    $tag = $(e.target).closest('.tag');
+    _ajaxTagDelete( $tag.data('tag-id') );
   };
 
   var _hideTags = function() {
