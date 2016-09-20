@@ -5,6 +5,7 @@ $(document).ready(function(){
 var WaldoModule = (function(){
   var _tags = [];
   var _characters = ['waldo', 'wenda'];
+  var _numTags = 0;
 
   var setupListeners = function(){
     $("img").click(makeTag);
@@ -15,6 +16,8 @@ var WaldoModule = (function(){
     this.y = y;
     this.width = 26;
     this.height = 26;
+    this.id = _numTags;
+    _numTags++;
   };
 
   var makeTag = function(e){
@@ -23,22 +26,42 @@ var WaldoModule = (function(){
 
     var $newTag = $("<div>")
                   .addClass("tag")
+                  .attr('data-tag-id', tag.id)
                   .css("left", tag.x - (tag.width/2))
                   .css("top", tag.y - (tag.height/2));
     $("#image-container").append($newTag);
-    showMenu(tag);
+    _showMenu(tag);
   };
 
-  var showMenu = function(tag) {
+  var _showMenu = function(tag) {
     var $menu = $("<select>");
+
+    // blank menu item
+    var $option = $('<option>')
+      .attr('disabled', 'disabled')
+      .attr('selected', 'selected');
+    $menu.append($option);
+
     for(var i in _characters){
-      var $option = $('<option>').val(i).text(_characters[i]);
+      $option = $('<option>').val(i).text(_characters[i]);
       $menu.append($option);
     }
+
     $menu.css("left", tag.x - (tag.width/2))
       .css("top", tag.y + (tag.height))
-      .appendTo($('#image-container'))
-      .css('position', 'absolute');
+      .css('position', 'absolute')
+      .attr('data-tag-id', tag.id)
+      .appendTo($('#image-container'));
+
+    $menu.change(_menuSelect);
+  };
+
+  var _menuSelect = function(e) {
+    var $menu = $(e.target);
+    var tag = _tags[$menu.data('tag-id')];
+
+    tag.character = $menu.filter('option:selected').val();
+    $menu.fadeOut(1000);
   };
 
   return{
