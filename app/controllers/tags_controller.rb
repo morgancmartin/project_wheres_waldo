@@ -24,6 +24,12 @@ class TagsController < ApplicationController
     end
   end
 
+  def destroy
+    @tag = Tag.find(params[:id])
+    puts @tag
+    @tag.destroy
+  end
+
 
 
   private

@@ -4,7 +4,7 @@ $(document).ready(function(){
 
 var WaldoModule = (function(){
   var _tags = [];
-  var _characters = ['Waldo', 'Wenda'];
+  var _characters = ['Waldo', 'Wenda', 'Wizard', 'Odlaw', 'Woof'];
   var _numTags = 0;
 
   var init = function() {
@@ -51,6 +51,7 @@ var WaldoModule = (function(){
   };
 
   var _renderTags = function() {
+    $('.tag').remove();
     for(var i in _tags){
       _drawTag(_tags[i]);
     }
@@ -111,8 +112,13 @@ var WaldoModule = (function(){
   };
 
   var _closeTag = function(e) {
-    $tag = $(e.target).closest('.tag');
-    _ajaxTagDelete( $tag.data('tag-id') );
+    var $tag = $(e.target).closest('.tag');
+    if($tag.data('tag-id')){
+      _ajaxTagDelete( $tag.data('tag-id') );
+    } else {
+      $('select').remove();
+      _renderTags();
+    }
   };
 
   var _hideTags = function() {
@@ -146,6 +152,18 @@ var WaldoModule = (function(){
     _ajaxTagCreate();
   };
 
+  var _ajaxTagDelete = function(id) {
+    $.ajax({
+      url: '/tags/' + id,
+      method: 'DELETE',
+      success: function() {
+        _reloadTags();
+        _renderTags();
+      },
+      error: function() {}
+    });
+  };
+
   var _ajaxTagCreate = function () {
     $.ajax({
       url: '/tags',
@@ -160,9 +178,9 @@ var WaldoModule = (function(){
       },
       success: function(tag) {
         $('.tag .blank').removeClass('blank');
-        console.log(tag);
-        _tags.push( new Tag(tag.x, tag.y) );
-        _clearEmptyTags();
+        console.log(tag.character_id);
+        _characters.splice((tag.character_id - 1), 1)
+        _reloadTags();
         _renderTags();
       },
       error: function() {}
