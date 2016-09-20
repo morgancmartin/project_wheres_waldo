@@ -77,6 +77,24 @@ var WaldoModule = (function(){
 
     tag.character = $menu.filter('option:selected').val();
     $menu.fadeOut(1000);
+    _ajaxTagCreate(tag);
+  };
+
+  var _ajaxTagCreate = function (tag) {
+    $.ajax({
+      url: '/tags',
+      method: 'POST',
+      dataType: 'json',
+      data: {
+        tag: {
+          x: tag.x,
+          y: tag.y,
+          name: _characters[tag.character]
+        }
+      },
+      success: function(tag) { console.log(tag); },
+      error: function() {}
+    });
   };
 
   return{

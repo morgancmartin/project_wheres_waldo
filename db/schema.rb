@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160919233442) do
+ActiveRecord::Schema.define(version: 20160920173505) do
 
   create_table "characters", force: :cascade do |t|
     t.string   "name"
@@ -19,15 +19,25 @@ ActiveRecord::Schema.define(version: 20160919233442) do
     t.integer  "radius"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "picture_id"
+    t.index ["picture_id"], name: "index_characters_on_picture_id"
+  end
+
+  create_table "pictures", force: :cascade do |t|
+    t.string   "url"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tags", force: :cascade do |t|
-    t.integer  "character_id"
+    t.string   "name"
     t.integer  "x"
     t.integer  "y"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-    t.index ["character_id"], name: "index_tags_on_character_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "picture_id"
+    t.index ["picture_id"], name: "index_tags_on_picture_id"
   end
 
 end
