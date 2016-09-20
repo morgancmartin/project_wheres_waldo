@@ -4,10 +4,10 @@ $(document).ready(function(){
 
 var WaldoModule = (function(){
   var _tags = [];
+  var _characters = ['waldo', 'wenda'];
 
   var setupListeners = function(){
     $("img").click(makeTag);
-    selectUser();
   };
 
   var Tag = function(x,y){
@@ -26,10 +26,19 @@ var WaldoModule = (function(){
                   .css("left", tag.x - (tag.width/2))
                   .css("top", tag.y - (tag.height/2));
     $("#image-container").append($newTag);
+    showMenu(tag);
   };
 
-  var selectUser = function() {
-    var tag = _tags[_tags.length - 1];
+  var showMenu = function(tag) {
+    var $menu = $("<select>");
+    for(var i in _characters){
+      var $option = $('<option>').val(i).text(_characters[i]);
+      $menu.append($option);
+    }
+    $menu.css("left", tag.x - (tag.width/2))
+      .css("top", tag.y + (tag.height))
+      .appendTo($('#image-container'))
+      .css('position', 'absolute');
   };
 
   return{
