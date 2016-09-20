@@ -31,13 +31,12 @@ ActiveRecord::Schema.define(version: 20160920173505) do
   end
 
   create_table "tags", force: :cascade do |t|
-    t.integer  "character_id"
+    t.string   "name"
     t.integer  "x"
     t.integer  "y"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer  "picture_id"
-    t.index ["character_id"], name: "index_tags_on_character_id"
     t.index ["picture_id"], name: "index_tags_on_picture_id"
   end
 

@@ -4,7 +4,7 @@ $(document).ready(function(){
 
 var WaldoModule = (function(){
   var _tags = [];
-  var _characters = ['waldo', 'wenda'];
+  var _characters = ['Waldo', 'Wenda'];
   var _numTags = 0;
 
   var setupListeners = function(){
@@ -76,7 +76,7 @@ var WaldoModule = (function(){
     var $menu = $(e.target);
     var tag = _tags[$menu.data('tag-id')];
 
-    tag.character = $menu.filter('option:selected').val();
+    tag.character = $menu.val();
     $menu.fadeOut(1000);
     _ajaxTagCreate(tag);
   };
