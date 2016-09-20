@@ -7,8 +7,13 @@ var WaldoModule = (function(){
   var _characters = ['Waldo', 'Wenda'];
   var _numTags = 0;
 
+  var _target = {
+    x: 0,
+    y: 0
+  };
+
   var setupListeners = function(){
-    $("img").click(_createMenu);
+    $("img").click(_clickHandler);
     $('#image-container').mouseenter(_showTags);
     $('#image-container').mouseleave(_hideTags);
   };
@@ -21,26 +26,36 @@ var WaldoModule = (function(){
     this.id = _tags.length;
   };
 
-  // var clearEmptyTags = function(){
-  //   $('.tag').not('[data-tag-id]')
-  // };
+  var _clickHandler = function(e) {
+    _clearEmptyTags();
+    _target.x = e.pageX;
+    _target.y = e.pageY;
 
-  var _makeBlankTag = function(e) {
-    new Tag(e.pageX, e.pageY).class = 'blank';
+    var blankTag = _makeBlankTag();
+    _drawTag(blankTag);
+    _createMenu();
+
   };
 
-  var _createMenu = function(e) {
-    // _clearEmptyTags();
-    var blankTag = _makeBlankTag(e);
-    _drawTag(blankTag);
+  var _clearEmptyTags = function(){
+    $('.blank').remove();
+    $('select').remove();
+  };
 
+  var _makeBlankTag = function() {
+    var tag = new Tag(_target.x, _target.y);
+    tag.class = "blank";
+    return tag;
+  };
+
+  var _createMenu = function() {
     var $menu = $("<select>");
     _blankOption($menu);
     for(var i in _characters){
       var $option = $('<option>').val(i).text(_characters[i]);
       $menu.append($option);
     }
-    _showMenu($menu, blankTag);
+    _showMenu($menu);
     $menu.change(_menuSelect);
   };
 
@@ -50,7 +65,7 @@ var WaldoModule = (function(){
         .attr('data-tag-id', tag.id)
         .css("left", tag.x - (tag.width/2))
         .css("top", tag.y - (tag.height/2));
-    if(tag.class === 'blank') { $tagDiv.addClass('blank'); };
+    if(tag.class === 'blank') { $tagDiv.addClass('blank'); }
     $("#image-container").append($tagDiv);
   };
 
@@ -65,11 +80,11 @@ var WaldoModule = (function(){
     $('.tag').show();
   };
 
-  var _showMenu = function($menu, tag) {
-    $menu.css("left", tag.x - (tag.width/2))
-      .css("top", tag.y + (tag.height))
+  var _showMenu = function($menu) {
+    $menu.css("left", _target.x - 13)
+      .css("top", _target.y + 26)
       .css('position', 'absolute')
-      .attr('data-tag-id', tag.id)
+      // .attr('data-tag-id', _target.id)
       .appendTo($('#image-container'));
   };
 
@@ -82,26 +97,28 @@ var WaldoModule = (function(){
 
   var _menuSelect = function(e) {
     var $menu = $(e.target);
-    var tag = $('.blank');
 
-    tag.attr('character', $menu.val());
+    _target.character =  _characters[$menu.val()];
     $menu.fadeOut(1000);
-    _ajaxTagCreate(tag);
+    _ajaxTagCreate();
   };
 
-  var _ajaxTagCreate = function (tag) {
+  var _ajaxTagCreate = function () {
     $.ajax({
       url: '/tags',
       method: 'POST',
       dataType: 'json',
       data: {
         tag: {
-          x: tag.css('left'),
-          y: tag.css('top'),
-          name: _characters[tag.character]
+          x: _target.x,
+          y: _target.y,
+          name: _target.character
         }
       },
-      success: function(tag) { _tags.push(tag); },
+      success: function(tag) { 
+        _tags.push(tag); 
+        _clearEmptyTags();
+      },
       error: function() {}
     });
   };
