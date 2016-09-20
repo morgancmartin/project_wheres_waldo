@@ -13,7 +13,7 @@ class TagsController < ApplicationController
     @character = Character.find_by_name(tag_params[:name])
     @tag = Tag.new(x: tag_params[:x], y: tag_params[:y])
     @tag.character = @character
-   
+
     if @tag.save
       respond_to do |format|
         format.json { render json: @tag, status: 201 }
