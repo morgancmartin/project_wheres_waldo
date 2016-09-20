@@ -2,14 +2,13 @@ class TagsController < ApplicationController
 
   def index
     @tags = Tag.all
+    respond_to do |format|
+      format.html
+      format.json { render json: @tags, status: 200 }
+    end
   end
 
   def create
-    puts "**************"
-    puts params.to_h
-    puts tag_params[:name]
-    puts "**************"
-
     @character = Character.find_by_name(tag_params[:name])
     @tag = Tag.new(x: tag_params[:x], y: tag_params[:y])
     @tag.character = @character

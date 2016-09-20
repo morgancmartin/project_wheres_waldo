@@ -1,11 +1,16 @@
 $(document).ready(function(){
-  WaldoModule.setupListeners();
+  WaldoModule.init();
 });
 
 var WaldoModule = (function(){
   var _tags = [];
   var _characters = ['Waldo', 'Wenda'];
   var _numTags = 0;
+
+  var init = function() {
+    setupListeners();
+    _reloadTags();
+  };
 
   var _target = {
     x: 0,
@@ -26,6 +31,32 @@ var WaldoModule = (function(){
     this.id = _tags.length;
   };
 
+  var _reloadTags = function() {
+    $.ajax({
+      url: '/tags',
+      method: 'GET',
+      dataType: 'json',
+      success: function(tags) {
+        console.log(tags);
+        _tags = [];
+        for(var i in tags){
+          var tag = tags[i];
+          if(tag.x && tag.y){
+            _tags.push( new Tag(tags[i].x, tags[i].y) );
+          }
+        }
+        _renderTags();
+      },
+      error: function() {}
+    });
+  };
+
+  var _renderTags = function() {
+    for(var i in _tags){
+      _drawTag(_tags[i]);
+    }
+  };
+
   var _clickHandler = function(e) {
     _clearEmptyTags();
     _target.x = e.pageX;
@@ -38,7 +69,8 @@ var WaldoModule = (function(){
   };
 
   var _clearEmptyTags = function(){
-    $('.blank').remove();
+    console.log('clearing');
+    $('.blank'). remove();
     $('select').remove();
   };
 
@@ -67,9 +99,6 @@ var WaldoModule = (function(){
         .css("top", tag.y - (tag.height/2));
     if(tag.class === 'blank') { $tagDiv.addClass('blank'); }
     $("#image-container").append($tagDiv);
-  };
-
-  var renderTags = function() {
   };
 
   var _hideTags = function() {
@@ -115,16 +144,19 @@ var WaldoModule = (function(){
           name: _target.character
         }
       },
-      success: function(tag) { 
-        _tags.push(tag); 
+      success: function(tag) {
+        $('.tag .blank').removeClass('blank');
+        console.log(tag);
+        _tags.push( new Tag(tag.x, tag.y) );
         _clearEmptyTags();
+        _renderTags();
       },
       error: function() {}
     });
   };
 
   return{
-    setupListeners: setupListeners
+    init: init
   };
 })();
 
