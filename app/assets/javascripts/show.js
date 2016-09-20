@@ -31,6 +31,7 @@ var WaldoModule = (function(){
                   .attr('data-tag-id', tag.id)
                   .css("left", tag.x - (tag.width/2))
                   .css("top", tag.y - (tag.height/2));
+    console.log('x:' + tag.x + 'y:'+ tag.y);
     $("#image-container").append($newTag);
     _createMenu(tag);
   };
@@ -101,3 +102,10 @@ var WaldoModule = (function(){
     setupListeners: setupListeners
   };
 })();
+
+
+// x:633 y:243
+// x:435 y:226
+// x:941 y:587
+// x:450 y:415
+// x:756 y:426
