@@ -22,11 +22,12 @@ ActiveRecord::Schema.define(version: 20160919233442) do
   end
 
   create_table "tags", force: :cascade do |t|
-    t.string   "name"
+    t.integer  "character_id"
     t.integer  "x"
     t.integer  "y"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["character_id"], name: "index_tags_on_character_id"
   end
 
 end

@@ -9,6 +9,8 @@ var WaldoModule = (function(){
 
   var setupListeners = function(){
     $("img").click(makeTag);
+    $('#image-container').mouseenter(_showTags);
+    $('#image-container').mouseleave(_hideTags);
   };
 
   var Tag = function(x,y){
@@ -30,29 +32,42 @@ var WaldoModule = (function(){
                   .css("left", tag.x - (tag.width/2))
                   .css("top", tag.y - (tag.height/2));
     $("#image-container").append($newTag);
-    _showMenu(tag);
+    _createMenu(tag);
   };
 
-  var _showMenu = function(tag) {
-    var $menu = $("<select>");
+  var _hideTags = function() {
+    $('.tag').hide();
+  };
 
-    // blank menu item
-    var $option = $('<option>')
-      .attr('disabled', 'disabled')
-      .attr('selected', 'selected');
-    $menu.append($option);
+  var _showTags = function() {
+    $('.tag').show();
+  };
 
-    for(var i in _characters){
-      $option = $('<option>').val(i).text(_characters[i]);
-      $menu.append($option);
-    }
-
+  var _showMenu = function($menu, tag) {
     $menu.css("left", tag.x - (tag.width/2))
       .css("top", tag.y + (tag.height))
       .css('position', 'absolute')
+      // .css('pointer-events', 'none')
       .attr('data-tag-id', tag.id)
       .appendTo($('#image-container'));
+  };
 
+  var _blankOption = function($menu) {
+    var $option = $('<option>')
+        .attr('disabled', 'disabled')
+        .attr('selected', 'selected');
+    $menu.append($option);
+  };
+
+  var _createMenu = function(tag) {
+    var $menu = $("<select>");
+    _blankOption($menu);
+
+    for(var i in _characters){
+      var $option = $('<option>').val(i).text(_characters[i]);
+      $menu.append($option);
+    }
+    _showMenu($menu, tag);
     $menu.change(_menuSelect);
   };
 
